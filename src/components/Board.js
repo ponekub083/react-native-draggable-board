@@ -27,8 +27,9 @@ class Board extends React.Component {
       startingY: 0,
       x: 0,
       y: 0,
-      movingMode: false,
+      movingMode: false
     };
+    this.currHorizotalScroll = 0;
 
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => this.state.movingMode,
@@ -37,7 +38,7 @@ class Board extends React.Component {
       onPanResponderMove: this.onPanResponderMove.bind(this),
       onPanResponderRelease: this.onPanResponderRelease.bind(this),
       onPanResponderTerminate: this.onPanResponderRelease.bind(this)
-    })
+    });
   }
 
   componentWillUnmount() {
@@ -57,7 +58,7 @@ class Board extends React.Component {
         if (this.shouldScroll(scrolling, offset, columnAtPosition)) {
           this.scroll(columnAtPosition, draggedItem, offset);
         }
-      }
+      };
 
       this.setState({
         x: leftTopCornerX,
@@ -208,7 +209,8 @@ class Board extends React.Component {
     }
   }
 
-  onScroll() {
+  onScroll(event) {
+    this.verticalOffset = event.nativeEvent.contentOffset.x;
     this.cancelMovingSubscription();
   }
 
@@ -226,8 +228,10 @@ class Board extends React.Component {
       transform: [{rotate: interpolatedRotateAnimation}],
       position: 'absolute',
       zIndex: zIndex,
+      elevation: zIndex,
       top: this.state.y - this.TRESHOLD,
-      left: this.verticalOffset + this.state.x
+      left: this.verticalOffset + this.state.x,
+      width: 300
     };
   }
 
@@ -272,6 +276,8 @@ class Board extends React.Component {
 
     return (
       <ScrollView
+        ref={ref => this.containerScrollView = ref}
+        scrollEventThrottle={16}
         style={this.props.style}
         contentContainerStyle={this.props.contentContainerStyle}
         scrollEnabled={!this.state.movingMode}

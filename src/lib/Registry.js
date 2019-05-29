@@ -40,11 +40,13 @@ class Registry {
     const items = _.range(rows.length).map((index) => {
       const row = rows[index];
       const id = row.id;
+      const locked = row.hasOwnProperty('locked') ? row.locked : false;
       const existingItemAttributes = this.existingItemAttributes(existingItems, id) || {};
       return new Item(Object.assign(existingItemAttributes, {
         id: id,
         index: index,
         columnId: columnId,
+        locked: locked,
         row: row
       }));
     });
