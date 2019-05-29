@@ -8,9 +8,11 @@ import {
   PanResponder,
   Animated,
   ScrollView,
-  Platform
+  Platform,
+  Dimensions
 } from 'react-native';
 
+const { width, height } = Dimensions.get('window');
 class Board extends React.Component {
   MAX_RANGE = 100
   MAX_DEG = 30
@@ -20,6 +22,8 @@ class Board extends React.Component {
     super(props);
 
     this.verticalOffset = 0;
+    this.verticalOffsetScrolling = 0;
+    this.hasBeenScroll = false;
 
     this.state = {
       rotate: new Animated.Value(0),
@@ -29,7 +33,6 @@ class Board extends React.Component {
       y: 0,
       movingMode: false
     };
-    this.currHorizotalScroll = 0;
 
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => this.state.movingMode,
@@ -64,6 +67,15 @@ class Board extends React.Component {
         x: leftTopCornerX,
         y: leftTopCornerY
       });
+      // tu:du:
+      if (gesture.moveX > gesture.x0 && (gesture.moveX + 75) > width && !this.hasBeenScroll) {
+        this.containerScrollView.scrollTo({x: this.verticalOffset + (gesture.moveX - gesture.x0 < 25 ? width - 25 : gesture.moveX - gesture.x0)});
+        this.hasBeenScroll = true;
+      }
+      if (gesture.moveX < gesture.x0 && gesture.moveX < 75 && !this.hasBeenScroll) {
+        this.containerScrollView.scrollTo({x: this.verticalOffset - (gesture.x0 - gesture.moveX < 25 ? width - 25 : gesture.x0 - gesture.moveX)});
+        this.hasBeenScroll = true;
+      }
     }
   }
 
@@ -112,6 +124,12 @@ class Board extends React.Component {
 
     const destColumnId = draggedItem.columnId();
     onDragEnd && onDragEnd(srcColumnId, destColumnId, draggedItem);
+    // tu:du:
+    if (this.verticalOffset !== this.verticalOffsetScrolling) {
+      this.verticalOffset = this.verticalOffsetScrolling;
+      this.props.rowRepository.updateColumnsLayoutAfterVisibilityChanged();
+    }
+    this.hasBeenScroll = false;
   }
 
   onPanResponderRelease(e, gesture) {
@@ -210,7 +228,8 @@ class Board extends React.Component {
   }
 
   onScroll(event) {
-    this.verticalOffset = event.nativeEvent.contentOffset.x;
+    // tu:du:
+    this.verticalOffsetScrolling = event.nativeEvent.contentOffset.x;
     this.cancelMovingSubscription();
   }
 
@@ -230,8 +249,7 @@ class Board extends React.Component {
       zIndex: zIndex,
       elevation: zIndex,
       top: this.state.y - this.TRESHOLD,
-      left: this.verticalOffset + this.state.x,
-      width: 300
+      left: this.verticalOffset + this.state.x
     };
   }
 
