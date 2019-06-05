@@ -8,7 +8,7 @@ Scrollable board component with sortable columns and draggable rows.
 
 Install library via `npm`
 
-`npm install react-native-draggable-board`
+`npm install rn-dnd-kanban`
 
 First you need to build `RowRepository` with data:
 
@@ -74,7 +74,7 @@ Then you can render the `Board`:
 
 # Example
 
-See [ReactNativeDraggableBoardExample](https://github.com/lesniakania/ReactNativeDraggableBoardExample) for more details.
+See [ReactNativeDraggableBoardExample](https://github.com/linhtc/react-native-draggable-board) for more details.
 
 # Supported platforms
 
@@ -82,13 +82,13 @@ Both iOS and Android are supported.
 
 # Issues
 
-Check [issues tab](https://github.com/lesniakania/react-native-draggable-board/issues)
+Check [issues tab](https://github.com/linhtc/react-native-draggable-board/issues)
 
 # Licence
 
 ISC License
 
-Copyright (c) 2016, Anna Slimak
+Copyright (c) 2019, Leon Tran
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
