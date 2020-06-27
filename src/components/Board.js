@@ -1,21 +1,22 @@
 import React from 'react';
-import _ from 'underscore';
-import ReactTimeout from 'react-timeout'
+import {
+  Animated,
+
+
+  Dimensions, PanResponder,
+
+
+  Platform, ScrollView
+} from 'react-native';
+import ReactTimeout from 'react-timeout';
 import Column from './Column';
 import TaskWrapper from './TaskWrapper';
 
-import {
-  PanResponder,
-  Animated,
-  ScrollView,
-  Platform,
-  Dimensions
-} from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 class Board extends React.Component {
   MAX_RANGE = 100
-  MAX_DEG = 30
+  MAX_DEG = 0
   TRESHOLD = 35
 
   constructor(props) {
@@ -98,21 +99,29 @@ class Board extends React.Component {
   }
 
   scroll(column, draggedItem, anOffset) {
-    if (!this.isScrolling()) {
-      this.onScrollingStarted();
-      const scrollOffset = column.scrollOffset() + 70 * anOffset;
-      this.props.rowRepository.setScrollOffset(column.id(), scrollOffset);
+    try {
+      if (!this.isScrolling()) {
+        this.onScrollingStarted();
+        const scrollOffset = column.scrollOffset() + 70 * anOffset;
+        this.props.rowRepository.setScrollOffset(column.id(), scrollOffset);
 
-      column.listView().scrollTo({ y: scrollOffset });
+        column.listView().scrollTo({ y: scrollOffset });
+      }
+
+
+
+      this.props.rowRepository.move(draggedItem, this.x, this.y);
+      let { scrolling, offset } = this.props.rowRepository.scrollingPosition(column, this.x, this.y);
+      if (this.shouldScroll(scrolling, offset, column)) {
+        this.props.requestAnimationFrame(() => {
+          this.scroll(column, draggedItem, offset);
+        });
+      }
+    }catch (e) {
+
     }
 
-    this.props.rowRepository.move(draggedItem, this.x, this.y);
-    let { scrolling, offset } = this.props.rowRepository.scrollingPosition(column, this.x, this.y);
-    if (this.shouldScroll(scrolling, offset, column)) {
-      this.props.requestAnimationFrame(() => {
-        this.scroll(column, draggedItem, offset);
-      });
-    }
+
   }
 
   endMoving() {
@@ -292,8 +301,26 @@ class Board extends React.Component {
       return this.props.renderColumnWrapper(column.data(), column.index(), columnComponent);
     });
 
+    let width = this.props.columnWidth;
+    const SPACING_FOR_CARD_INSET = width * 0.1 - 10
+
     return (
       <ScrollView
+          pagingEnabled
+          decelerationRate={0}
+          snapToInterval={width}
+          snapToAlignment='center'
+          overScrollMode={"never"}
+          contentInset={{ // iOS ONLY
+            top: 0,
+            left: SPACING_FOR_CARD_INSET, // Left spacing for the very first card
+            bottom: 0,
+            right: SPACING_FOR_CARD_INSET // Right spacing for the very last card
+          }}
+          contentContainerStyle={{ // contentInset alternative for Android
+            paddingHorizontal: Platform.OS === 'android' ? 10 : 0 // Horizontal spacing before and after the ScrollView
+          }}
+          showsHorizontalScrollIndicator={false}
         ref={ref => this.containerScrollView = ref}
         scrollEventThrottle={16}
         style={this.props.style}
