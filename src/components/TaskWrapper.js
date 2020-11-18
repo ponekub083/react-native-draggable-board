@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { TouchableWithoutFeedback, Animated } from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Animated
+} from 'react-native';
 
 class TaskWrapper extends React.Component {
   render() {
@@ -16,10 +19,12 @@ class TaskWrapper extends React.Component {
         onPressIn={this.props.onPressIn}
         onPress={this.props.onPress}
       >
-        <Animated.View style={style}>{this.props.children}</Animated.View>
+        <Animated.View style={style}>
+          {this.props.children}
+        </Animated.View>
       </TouchableWithoutFeedback>
-    );
+    )
   }
-}
+};
 
 export default TaskWrapper;
