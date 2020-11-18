@@ -8,7 +8,6 @@ import {
 
   Platform, ScrollView
 } from 'react-native';
-import SortableGrid from 'react-native-sortable-grid';
 import ReactTimeout from 'react-timeout';
 import Column from './Column';
 import TaskWrapper from './TaskWrapper';
@@ -333,22 +332,8 @@ class Board extends React.Component {
         horizontal={true}
         {...this.panResponder.panHandlers}
       >
-        <SortableGrid
-          blockTransitionDuration={400}
-          activeBlockCenteringDuration={200}
-          itemsPerRow={4}
-          dragActivationTreshold={200}
-          onDragRelease={(itemOrder) =>
-            console.log(
-              'Drag was released, the blocks are in the following order: ',
-              itemOrder,
-            )
-          }
-          onDragStart={() => console.log('Some block is being dragged now!')}
-        >
           {this.movingTask()}
           {columnWrappers}
-        </SortableGrid>
       </ScrollView>
     )
   }
