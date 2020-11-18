@@ -36,7 +36,7 @@ class RowRepository {
   addListener(columnId, event, callback) {
     const forColumn = this.listeners[columnId];
     this.listeners[columnId] = Object.assign(forColumn || {}, {
-      [event]: callback
+      [event]: callback,
     });
   }
 
@@ -130,6 +130,6 @@ class RowRepository {
   move(draggedItem, x, y) {
     return this.mover.move(this, this.registry, draggedItem, x, y);
   }
-};
+}
 
 export default RowRepository;
