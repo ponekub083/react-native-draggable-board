@@ -9,6 +9,7 @@ import {
 import ReactTimeout from 'react-timeout';
 import Column from './Column';
 import TaskWrapper from './TaskWrapper';
+import { DraxProvider, DraxList } from 'react-native-drax';
 
 const { width, height } = Dimensions.get('window');
 class Board extends React.Component {
@@ -337,38 +338,77 @@ class Board extends React.Component {
     const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
     return (
-      <ScrollView
-        pagingEnabled
-        decelerationRate={0}
-        snapToInterval={width}
-        snapToAlignment="center"
-        overScrollMode={'never'}
-        contentInset={{
-          // iOS ONLY
-          top: 0,
-          left: SPACING_FOR_CARD_INSET, // Left spacing for the very first card
-          bottom: 0,
-          right: SPACING_FOR_CARD_INSET, // Right spacing for the very last card
-        }}
-        contentContainerStyle={{
-          // contentInset alternative for Android
-          paddingHorizontal: Platform.OS === 'android' ? 10 : 0, // Horizontal spacing before and after the ScrollView
-        }}
-        showsHorizontalScrollIndicator={false}
-        ref={(ref) => (this.containerScrollView = ref)}
-        scrollEventThrottle={16}
-        style={this.props.style}
-        contentContainerStyle={this.props.contentContainerStyle}
-        scrollEnabled={!this.state.movingMode}
-        onScroll={this.onScroll.bind(this)}
-        onScrollEndDrag={this.onScrollEnd.bind(this)}
-        onMomentumScrollEnd={this.onScrollEnd.bind(this)}
-        horizontal={true}
-        {...this.panResponder.panHandlers}
-      >
-        {this.movingTask()}
-        {columnWrappers}
-      </ScrollView>
+      // <ScrollView
+      //   pagingEnabled
+      //   decelerationRate={0}
+      //   snapToInterval={width}
+      //   snapToAlignment="center"
+      //   overScrollMode={'never'}
+      //   contentInset={{
+      //     // iOS ONLY
+      //     top: 0,
+      //     left: SPACING_FOR_CARD_INSET, // Left spacing for the very first card
+      //     bottom: 0,
+      //     right: SPACING_FOR_CARD_INSET, // Right spacing for the very last card
+      //   }}
+      //   contentContainerStyle={{
+      //     // contentInset alternative for Android
+      //     paddingHorizontal: Platform.OS === 'android' ? 10 : 0, // Horizontal spacing before and after the ScrollView
+      //   }}
+      //   showsHorizontalScrollIndicator={false}
+      //   ref={(ref) => (this.containerScrollView = ref)}
+      //   scrollEventThrottle={16}
+      //   style={this.props.style}
+      //   contentContainerStyle={this.props.contentContainerStyle}
+      //   scrollEnabled={!this.state.movingMode}
+      //   onScroll={this.onScroll.bind(this)}
+      //   onScrollEndDrag={this.onScrollEnd.bind(this)}
+      //   onMomentumScrollEnd={this.onScrollEnd.bind(this)}
+      //   horizontal={true}
+      //   {...this.panResponder.panHandlers}
+      // >
+      //   {this.movingTask()}
+      //   {columnWrappers}
+      // </ScrollView>
+      <DraxProvider style={{ backgroundColor: 'yellow' }}>
+        <DraxList
+          style={this.props.style}
+          {...this.panResponder.panHandlers}
+          data={columns}
+          onItemReorder={({ fromIndex, fromItem, toIndex, toItem }) => {
+            console.log(fromItem);
+            console.log(
+              `Item dragged from index ${fromIndex} (${fromItem}) to index ${toIndex} (${toItem})`,
+            );
+          }}
+          keyExtractor={(item) => item}
+          renderItemContent={({ item: column }, { viewState, hover }) => {
+            const columnComponent = (
+              <Column
+                column={column}
+                movingMode={this.state.movingMode}
+                rowRepository={this.props.rowRepository}
+                onPressIn={this.onPressIn.bind(this)}
+                onPress={this.onPress.bind(this)}
+                onPanResponderMove={this.onPanResponderMove.bind(this)}
+                onPanResponderRelease={this.onPanResponderRelease.bind(this)}
+                renderWrapperRow={this.renderWrapperRow.bind(this)}
+                onScrollingStarted={this.onScrollingStarted.bind(this)}
+                onScrollingEnded={this.onScrollingEnded.bind(this)}
+                unsubscribeFromMovingMode={this.cancelMovingSubscription.bind(
+                  this,
+                )}
+              />
+            );
+            return this.props.renderColumnWrapper(
+              column.data(),
+              column.index(),
+              columnComponent,
+            );
+          }}
+          horizontal={true}
+        />
+      </DraxProvider>
     );
   }
 }
