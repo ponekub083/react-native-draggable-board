@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "react-native-drax": "github:ponekub083/react-native-drax",
     "react-native-sortable-grid": "^2.0.0",
     "react-timeout": "^1.0.0",
     "underscore": "^1.8.3"
