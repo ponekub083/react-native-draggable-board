@@ -187,6 +187,7 @@ class Column extends React.Component {
           scrollEnabled={!this.props.movingMode}
           onContentSizeChange={this.onContentSizeChange.bind(this)}
           enableEmptySections={true}
+          horizontal={true}
         />
       </View>
     );
