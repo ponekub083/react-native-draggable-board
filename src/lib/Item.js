@@ -1,6 +1,7 @@
 class Item {
   constructor(attributes) {
     this._attributes = attributes;
+    this._attributes.layout = {x : 0 , y: 0};
   }
 
   attributes() {

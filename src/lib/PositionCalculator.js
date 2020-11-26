@@ -1,10 +1,9 @@
 class PositionCalculator {
-  TRESHOLD = 35
+  TRESHOLD = 56
 
   columnAtPosition(columns, x, y) {
     let column = columns.find((column) => {
       let layout = column.layout();
-
       const left = x > layout.x;
       const right = x < layout.x + layout.width;
       const up = y > layout.y - this.TRESHOLD;
@@ -18,7 +17,6 @@ class PositionCalculator {
 
   scrollingPosition(column, x, y) {
     let layout = column.layout();
-
     let upperEnd = layout.y;
     let upper = y > upperEnd - this.TRESHOLD && y < upperEnd + this.TRESHOLD;
 

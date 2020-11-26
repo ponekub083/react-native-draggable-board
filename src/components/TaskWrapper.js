@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  TouchableWithoutFeedback,
+  TouchableNativeFeedback,
   Animated
 } from 'react-native';
 
@@ -15,14 +15,14 @@ class TaskWrapper extends React.Component {
     }
 
     return (
-      <TouchableWithoutFeedback
+      <TouchableNativeFeedback
         onPressIn={this.props.onPressIn}
         onPress={this.props.onPress}
       >
         <Animated.View style={style}>
           {this.props.children}
         </Animated.View>
-      </TouchableWithoutFeedback>
+      </TouchableNativeFeedback>
     )
   }
 };

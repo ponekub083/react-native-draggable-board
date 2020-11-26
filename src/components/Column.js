@@ -2,10 +2,10 @@ import React from 'react';
 
 import {
   View,
-  // ListView,
+  Dimensions,TouchableWithoutFeedback,
   FlatList
 } from 'react-native';
-
+const { winWidth : winWidth, height : winHeigth } = Dimensions.get('window');
 class Column extends React.Component {
   constructor(props) {
     super(props);
@@ -141,15 +141,17 @@ class Column extends React.Component {
         onPressIn: this.onPressIn(item),
         onPress: this.onPress(item),
         hidden: item.isHidden(),
-        item: item
+        item: item,
+        onLayout : this.updateItemWithLayout(item)
       })}
     </View>
   );
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={()=>{}}>
       <View
-        style={{ flex: 1 }}
+       style={{ maxHeight: winHeigth*0.7}}
         ref={this.setColumnRef.bind(this)}
         onLayout={this.updateColumnWithLayout.bind(this)}>
         <FlatList
@@ -158,16 +160,17 @@ class Column extends React.Component {
           renderItem={this._renderItem}
           ref={this.setListView.bind(this)}
           onScroll={this.handleScroll.bind(this)}
-          scrollEventThrottle={0}
+          scrollEventThrottle={16}
           onMomentumScrollEnd={this.onMomentumScrollEnd.bind(this)}
           onScrollEndDrag={this.onScrollEndDrag.bind(this)}
           onChangeVisibleRows={this.handleChangeVisibleItems.bind(this)}
           scrollEnabled={!this.props.movingMode}
           onContentSizeChange={this.onContentSizeChange.bind(this)}
           enableEmptySections={true}
-          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         />
-      </View>
+      </View></TouchableWithoutFeedback>
     );
   }
 };

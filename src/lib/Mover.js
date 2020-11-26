@@ -37,15 +37,20 @@ class Mover {
   }
 
   moveToOtherColumn(rowRepository, registry, fromColumnId, toColumnId, item) {
+    
+    
+
     const fromItems = rowRepository.items(fromColumnId);
     // -2 is because last task is fake task added because of the bug:
     // https://github.com/facebook/react-native/issues/12014
     for (const i of _.range(fromItems.length - 2, item.index(), -1)) {
       let fromItem = fromItems[i];
       fromItem.setIndex(fromItem.index() - 1);
-      const newX = fromItems[i - 1].layout().x;
-      const newY = fromItems[i - 1].layout().y;
-      fromItem.setLayout(Object.assign(fromItem.layout(), { x: newX, y: newY }));
+      if(fromItems[i - 1].layout()){
+        const newX = fromItems[i - 1].layout().x || 0;
+        const newY = fromItems[i - 1].layout().y || 0;
+        fromItem.setLayout(Object.assign(fromItem.layout(), { x: newX, y: newY }));
+      }
     }
     registry.move(fromColumnId, toColumnId, item);
     rowRepository.notify(fromColumnId, 'reload');
