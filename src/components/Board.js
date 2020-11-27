@@ -347,8 +347,21 @@ class Board extends React.Component {
                 dragColumn : false,
                 })
     this.handleDragColumn(1);
+      if (this.verticalOffset !== this.verticalOffsetScrolling) {
+      this.verticalOffset = this.verticalOffsetScrolling;
+      this.props.rowRepository.updateColumnsLayoutAfterVisibilityChanged();
+    }
+    this.hasBeenScroll = false;
    }
+
    onDataChange (data){
+     //
+  }
+
+  onDragging (gestureState, left, top, moveToIndex) {
+    //
+    
+    this.calculateScroll(gestureState);
   }
 
 
@@ -368,9 +381,6 @@ class Board extends React.Component {
     const childrenWidth = this.props.columnWidth +32
     const childrenHeight = winHeigth;
 
-    const tranY = ((winHeigth - (winHeigth * minScale))/2)+16;
-    const tranX = (childrenWidth * minScale) *  columns.length;
-  
      let transform = {
         transform: [{ scale: this.state.scaleValue }],
     };
@@ -409,12 +419,14 @@ class Board extends React.Component {
         {...this.panResponder.panHandlers}
       >
         {this.movingTask()}
-        <Animated.View style={[{flex: 1}, transforObj]}>
+        <Animated.View style={[{flex: 1}]}>
         <DragSortableView 
+          isDragFreely
           dataSource={columns}
           parentWidth={parentWidth}
           childrenHeight={childrenHeight}
           childrenWidth= {childrenWidth}
+          updateOffset ={()=> this.verticalOffset}
           firstClick={(positionX) => this.setState({firstClick : positionX})}
           maxScale={1.015}
           delayLongPress={10}
@@ -427,6 +439,7 @@ class Board extends React.Component {
           onDragStart={this.onDragStart.bind(this)}
           onDragEnd={this.onDragEnd.bind(this)}
           onDataChange={this.onDataChange.bind(this)}
+          onDragging={this.onDragging.bind(this)}
           keyExtractor={(item,index)=>item.id} 
           renderItem={(column,index)=>{
             const columnComponent = (
